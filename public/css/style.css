@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+.rounded-10px {
+    border-radius: 10px;
+}
+
+.popup {
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: fit-content;
+  top: 30px;
+  right: 30px;
+  overflow: hidden;
+}
+
+.popup-show {
+  transition: all ease 0.2s;
+  opacity: 1;
+  height: fit-content;
+}
+
+.popup-hidden {
+  height: 0;
+  opacity: 0;
+  transition: all ease 0.2s;
+}
