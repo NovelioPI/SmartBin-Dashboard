@@ -29,7 +29,7 @@
             <!--- MAIN --->
             <div class="p-3 w-100 h-100 position-relative">
                 <div id="map" class="p-3 w-100 h-100 border rounded-10px shadow"></div>
-                <div id="popup" class="popup popup-hidden m-4 position-abosolute"></div>
+                <div id="popup" class="popup popup-hidden m-4 position-absolute"></div>
             </div>
         </div>
 
@@ -42,10 +42,13 @@
         <script>
             $('document').ready(function () {
                 const bins = JSON.parse('<?= json_encode($bins) ?>')
-                bins.forEach((bin) => {
-                    updateMarker(bin);
-                    updatePopup(bin);
-                })
+                const popup = $('.popup');
+                setInterval(() => {
+                    bins.forEach((bin) => {
+                        updateMarker(bin);
+                    })
+                    updatePopup()
+                }, 2000);
             })
         </script>
     </body>

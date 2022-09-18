@@ -4,10 +4,27 @@ namespace App\Controllers;
 
 class Home extends BaseController
 {
-    public function index()
+    function __construct()
     {
-        $db = db_connect();
-        $builder = $db
+        $this->db = db_connect();
+    }
+
+    private function getLatestUpdatedSubquery() 
+    {
+        $subquery = $this->db
+            ->table('statustempatsampah')
+            ->selectMax('WaktuAmbil', 'LastWaktuAmbil')
+            ->groupBy('TempatSampah_ID')
+            ->getCompiledSelect();
+
+        return $subquery;
+    }
+
+    public function index()
+    {   
+        $subquery = $this->getLatestUpdatedSubquery();
+
+        $builder = $this->db
             ->table('statustempatsampah sts')
             ->select([
                 'ts.ID',
@@ -15,8 +32,9 @@ class Home extends BaseController
                 'ts.Longitude',
                 'sts.WaktuAmbil',
                 'js.Deskripsi'])
-            ->join('tempatsampah ts', 'ts.ID = sts.ID')
-            ->join('jenisstatus js', 'js.ID = sts.ID');
+            ->join("($subquery) sts2", 'sts2.LastWaktuAmbil = sts.WaktuAmbil')
+            ->join('tempatsampah ts', 'ts.ID = sts.TempatSampah_ID')
+            ->join('jenisstatus js', 'js.ID = sts.JenisStatus_ID');
         
         $data['bins'] = $builder->get()->getResultArray();
 

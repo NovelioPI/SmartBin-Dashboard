@@ -2,12 +2,17 @@ const map = new ol.Map({
   target: 'map',
   layers: [
     new ol.layer.Tile({
-      source: new ol.source.OSM()
+      source: new ol.source.XYZ({
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        maxZoom: 19,
+        attribution: ['Powered By Esri']
+      })
     })
   ],
   view: new ol.View({
-    center: new ol.proj.fromLonLat([ 110.3812446, -7.768116 ]),
-    zoom: 12
+    center: new ol.proj.fromLonLat([ 110.3779112, -7.7701649 ]),
+    zoom: 18,
+    minZoom: 18,
   }),
   controls: new ol.control.defaults.defaults({
     attribution: false,
@@ -39,11 +44,10 @@ map.on('click', (event) => {
   const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature)
   if (feature) {
     binProperties = feature.getProperties()
-    const popup = document.getElementById('popup');
+    updatePopup()
     popup.classList.remove('popup-hidden')
     popup.classList.add('popup-show')
   } else {
-    const popup = document.getElementById('popup');
     popup.classList.remove('popup-show')
     popup.classList.add('popup-hidden')
   }
@@ -51,13 +55,12 @@ map.on('click', (event) => {
 
 map.getView().on('change:resolution', (event) => {
   const zoom = map.getView().getZoom()
+  const features = markerLayer.getSource().getFeatures()
   if (zoom > 15) {
-    const features = markerLayer.getSource().getFeatures()
     features.forEach((feature) => {
       feature.getStyle().getText().setText(feature.get('name'))
     })
   } else {
-    const features = markerLayer.getSource().getFeatures()
     features.forEach((feature) => {
       feature.getStyle().getText().setText('')
     })
@@ -98,20 +101,18 @@ function createMarker(id) {
   return positionMarker
 }
 
-function updatePopup(bin) {
+function updatePopup() {
   // create initial value
   if(typeof binProperties === 'undefined') {
-    binProperties = bin;
+    binProperties = 0;
   }
-
-  // return binProperties.id === bin.id ? bin : binProperties;
   const popup = document.getElementById('popup');
-  popup.innerHTML = Popup(bin);
+  popup.innerHTML = Popup(binProperties);
 }
 
 async function updateMarker(bin) {
   if(bin.ID === '') {
-    return
+    return;
   }
 
   const coordinate = ol.proj.fromLonLat([
@@ -134,12 +135,35 @@ async function updateMarker(bin) {
   markerLayer.getSource().addFeature(newMarker)
 }
 
+map.setView(new ol.View({
+  center: map.getView().getCenter(),
+  extent: map.getView().calculateExtent(map.getSize()),
+  zoom: map.getView().getZoom()
+}));
+
 function Popup(bin) {
   return `
-    <table>
+    <table class="table">
       <tbody>
         <tr>
+          <td>Bin Id</id>
           <td>${bin.ID}</td>
+        </tr>
+        <tr>
+          <td>Latitude</td>
+          <td>${bin.Latitude}</td>
+        </tr>
+        <tr>
+          <td>Longitude</td>
+          <td>${bin.Longitude}</td>
+        </tr>
+        <tr>
+          <td>Waktu Ambil</td>
+          <td>${bin.WaktuAmbil}</td>
+        </tr>
+        <tr>
+          <td>Status</td>
+          <td>${bin.Deskripsi}</td>
         </tr>
       </tbody>
     </table>
