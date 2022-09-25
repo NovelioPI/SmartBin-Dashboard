@@ -37,7 +37,15 @@ class Home extends BaseController
             ->join('jenisstatus js', 'js.ID = sts.JenisStatus_ID');
         
         $data['bins'] = $builder->get()->getResultArray();
-
+        
         return view('home', $data);
+    }
+
+    public function getData()
+    {
+        $sensor_data = $this->request->getBody();
+        $builder = $this->db->table('statustempatsampah');
+        $builder->insert(json_decode($sensor_data));
+        dd($sensor_data);
     }
 }
