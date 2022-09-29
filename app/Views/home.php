@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Dashboard</title>
         <!-- Bootstrap -->
         <link rel="stylesheet" href="<?= base_url('plugins/bootstrap/css/bootstrap.min.css') ?>" />
@@ -19,17 +20,18 @@
     </head>
     <body>
 
-        <div class="container w-100 h-100">
+        <div class="container-fluid w-100 h-100">
             <!--- HEADER --->
             <div class="d-flex p-3 align-items-center w-100 justify-content-between">
-                <h2 class='m-0'>SmartBin</h2>
-                <p class='m-0 ps-3 border-start border-3 border-dark'>ELINS UGM</p>
+                <h1 class='m-0'>Smart Bin Dashboard</h1>
+                <p class='m-0 ps-3 border-start border-3 border-dark'>DIKE UGM</p>
             </div>
     
             <!--- MAIN --->
-            <div class="p-3 w-100 h-100 position-relative">
+            <div class="py-3 px-md-3 w-100 h-100 position-relative map-container">
                 <div id="map" class="p-3 w-100 h-100 border rounded-10px shadow"></div>
                 <div id="popup" class="popup popup-hidden m-4 position-absolute"></div>
+                <div id="pulse"></div>
             </div>
         </div>
 
@@ -41,14 +43,20 @@
 
         <script>
             $('document').ready(function () {
-                const bins = JSON.parse('<?= json_encode($bins) ?>')
                 const popup = $('.popup');
+                const pulse = $('#pulse');
                 setInterval(() => {
-                    bins.forEach((bin) => {
-                        updateMarker(bin);
+                    $.ajax({
+                        url: "<?= base_url('api/get/all') ?>",
+                        success: function (data) {
+                            let bins = data.data;
+                            bins.forEach((bin) => {
+                                updateMarker(bin);
+                            })
+                        }
                     })
-                    updatePopup()
-                }, 2000);
+                    updatePopup();
+                }, 3000);
             })
         </script>
     </body>
