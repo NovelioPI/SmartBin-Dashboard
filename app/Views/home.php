@@ -53,9 +53,9 @@
                             bins.forEach((bin) => {
                                 updateMarker(bin);
                             })
+                            updatePopup();
                         }
                     })
-                    updatePopup();
                 }, 3000);
             })
         </script>
