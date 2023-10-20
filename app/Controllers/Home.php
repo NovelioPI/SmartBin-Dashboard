@@ -15,7 +15,10 @@ class Home extends BaseController
     {
         $subquery = $this->db
             ->table('statustempatsampah')
-            ->selectMax('WaktuAmbil', 'LastWaktuAmbil')
+            ->select([
+              'TempatSampah_ID',
+              'max(WaktuAmbil) as LastWaktuAmbil'
+              ])
             ->groupBy('TempatSampah_ID')
             ->getCompiledSelect();
 
@@ -27,7 +30,7 @@ class Home extends BaseController
                 'ts.Longitude',
                 'sts.WaktuAmbil',
                 'js.Deskripsi'])
-            ->join("($subquery) sts2", 'sts2.LastWaktuAmbil = sts.WaktuAmbil')
+            ->join("($subquery) sts2", 'sts2.TempatSampah_ID = sts.TempatSampah_ID and sts2.LastWaktuAmbil = sts.WaktuAmbil')
             ->join('tempatsampah ts', 'ts.ID = sts.TempatSampah_ID')
             ->join('jenisstatus js', 'js.ID = sts.JenisStatus_ID');
         

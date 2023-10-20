@@ -85,13 +85,13 @@ map.on('click', (event) => {
 function setMarkerIcon(status) {
   let iconPath = './images/';
   switch (status) {
-    case 'Tidak terhubung': 
+    case 'Tidak Terhubung': 
       iconPath = iconPath + 'bin_not-connected.png';
       break;
     case 'Kosong':
       iconPath = iconPath + 'bin_empty.png';
       break;
-    case 'Setengah penuh':
+    case 'Setengah Penuh':
       iconPath = iconPath + 'bin_half-empty.png';
       break;
     case 'Penuh':
