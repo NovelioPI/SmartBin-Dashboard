@@ -39,6 +39,8 @@ $routes->get('/', 'Home::index');
 $routes->get('/settings', 'Home::settings');
 $routes->get('/settings/edit/(:num)', 'Home::edit/$1');
 $routes->post('/settings/edit/(:num)', 'Home::editBin/$1');
+$routes->get('/settings/add', 'Home::add');
+$routes->post('/settings/add', 'Home::addBin');
 $routes->get('/api/get/all', 'Home::getLatestBinsData');
 $routes->post('/api/set', 'Home::setBinData');
 /*

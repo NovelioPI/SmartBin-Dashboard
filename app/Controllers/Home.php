@@ -96,6 +96,32 @@ class Home extends BaseController
         return redirect()->to('/settings');
     }
 
+    public function add()
+    {
+        return view('add');
+    }
+
+    public function addBin()
+    {
+      $post = $this->request->getPost();
+
+      $bin = [
+          'Latitude' => (float)$post['Latitude'],
+          'Longitude' => $post['Longitude']
+      ];
+
+      $this->db->transBegin();
+      $status = $this->db->table('tempatsampah ts')
+          ->insert($bin);
+      if ($status) {
+          $this->db->transCommit();
+          return redirect()->to('/settings');
+      }
+
+      $this->db->transRollBack();
+      return redirect()->to('/settings');
+    }
+
     public function getLatestBinsData()
     {
         try {
