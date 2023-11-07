@@ -36,6 +36,9 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
+$routes->get('/settings', 'Home::settings');
+$routes->get('/settings/edit/(:num)', 'Home::edit/$1');
+$routes->post('/settings/edit/(:num)', 'Home::editBin/$1');
 $routes->get('/api/get/all', 'Home::getLatestBinsData');
 $routes->post('/api/set', 'Home::setBinData');
 /*

@@ -42,6 +42,60 @@ class Home extends BaseController
         return view('home');
     }
 
+    public function settings()
+    {
+        $query = $this->db
+            ->table('tempatsampah ts')
+            ->get()
+            ->getResultArray();
+        
+        $data['bins'] = $query;
+        
+        return view('settings', $data);
+    }
+
+    public function edit($id)
+    {
+        $query = $this->db
+            ->table('tempatsampah ts')
+            ->where('ID', $id)
+            ->get()
+            ->getRowArray();
+
+        $data['bin'] = $query;
+
+        return view('edit', $data);
+    }
+
+    public function editBin($id)
+    {
+        $post = $this->request->getPost();
+        
+        if (!$this->validate([
+          'Latitude' => 'required',
+          'Longitude' => 'required'
+        ])) {
+            return redirect()->back();
+        }
+
+        $bin = [
+            'Latitude' => (float) $post['Latitude'],
+            'Longitude' => $post['Longitude']
+        ];
+
+        $this->db->transBegin();
+        $status = $this->db->table('tempatsampah ts')
+            ->update($bin, ['id' => $id]);
+
+        if ($status) {
+            $this->db->transCommit();
+            return redirect()->to('/settings');
+        }
+
+        $this->db->transRollBack();
+        return redirect()->to('/settings');
+    }
+
     public function getLatestBinsData()
     {
         try {

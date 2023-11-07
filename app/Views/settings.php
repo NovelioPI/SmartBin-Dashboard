@@ -25,42 +25,47 @@
             <div class="d-flex p-3 align-items-center w-100 justify-content-between">
                 <h1 class='m-0'>Smart Bin Dashboard</h1>
                 <div>
-                  <a href="<?= base_url('settings') ?>" class="btn btn-primary me-2">Settings</a>
                   <p class='m-0 ps-3 border-start border-3 border-dark d-inline'>DIKE UGM</p>
                 </div>
             </div>
     
             <!--- MAIN --->
-            <div class="py-3 px-md-3 w-100 h-100 position-relative map-container">
-                <div id="map" class="p-3 w-100 h-100 border rounded-10px shadow"></div>
-                <div id="popup" class="popup popup-hidden m-4 position-absolute"></div>
-                <div id="pulse"></div>
+            <!--- MAIN --->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card m-3 p-3">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <td>Id</td>
+                            <td>Latitude</td>
+                            <td>Longitude</td>
+                            <td>Aksi</td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php if (isset($bins)): ?>
+                            <?php foreach ($bins as $bin): ?>
+                              <tr>
+                                <td><?= $bin['ID'] ?></td>
+                                <td><?= $bin['Latitude'] ?></td>
+                                <td><?= $bin['Longitude'] ?></td>
+                                <td>
+                                  <a href="<?= base_url('settings/edit/'.$bin['ID']) ?>" class="btn btn-primary">
+                                    Edit
+                                  </a>
+                                </td>
+                              </tr>
+                            <?php endforeach; ?>
+                          <?php endif; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
             </div>
         </div>
 
         <script src="<?= base_url('plugins/bootstrap/js/bootstrap.min.js') ?>"></script>
         <script src="<?= base_url('plugins/jquery/jquery-3.6.1.min.js') ?>"></script>
-
-        <script src="<?= base_url('plugins/ol/ol.js') ?>"></script>
-        <script src="<?= base_url('js/index.js')?>"></script>
-
-        <script>
-            $('document').ready(function () {
-                const popup = $('.popup');
-                const pulse = $('#pulse');
-                setInterval(() => {
-                    $.ajax({
-                        url: "<?= base_url('api/get/all') ?>",
-                        success: function (data) {
-                            let bins = data.data;
-                            bins.forEach((bin) => {
-                                updateMarker(bin);
-                            })
-                            updatePopup();
-                        }
-                    })
-                }, 3000);
-            })
-        </script>
     </body>
 </html>
