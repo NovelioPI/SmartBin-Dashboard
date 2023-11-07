@@ -8,6 +8,7 @@ class Home extends BaseController
 {
     function __construct()
     {
+        date_default_timezone_set('Asia/Jakarta');
         $this->db = db_connect();
     }
 
@@ -102,6 +103,28 @@ class Home extends BaseController
             $builder = $this->getLatestDataQuery();
             $bins = $builder->get()->getResultArray();
     
+            // check for not connected data
+            foreach ($bins as $bin) {
+                $lastUpdateInDay = $this->checkTimeDifference($bin['WaktuAmbil']);
+                if ($lastUpdateInDay > 8) {
+                    // update status to not connected
+                    $newData = [
+                      'TempatSampah_ID' => $bin['ID'],
+                      'JenisStatus_ID' => 1,
+                      'WaktuAmbil' => date('Y-m-d H:i:s')
+                    ];
+
+                    $this->db->transBegin();
+                    $status = $this->db->table('statustempatsampah sts')
+                        ->insert($newData);
+                    if ($status) {
+                        $this->db->transCommit();
+                    } else {
+                        $this->db->transRollBack();
+                    }
+                }
+            }
+            
             return $this
                 ->response
                 ->setStatusCode(200)
@@ -123,6 +146,17 @@ class Home extends BaseController
                     'data'      => null
             ]);
         }
+    }
+
+    private function checkTimeDifference($last)
+    {
+        $last = strtotime(date('Y-m-d', strtotime($last)));
+        $now = strtotime(date('Y-m-d'));
+
+        $secs = $now - $last;
+        $day = $secs / (60 * 60 * 24);
+
+        return $day;
     }
 
     public function setBinData()
